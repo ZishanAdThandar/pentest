@@ -1,0 +1,70 @@
+#!/usr/bin/env python
+import requests
+import re
+
+print("""
+ _     _               _ _ _       _     
+| |   (_)             (_) | |     | |    
+| |__  _ ___ _ __ ___  _| | | __ _| |__  
+| '_ \| / __| '_ ` _ \| | | |/ _` | '_ \ 
+| |_) | \__ \ | | | | | | | | (_| | | | |
+|_.__/|_|___/_| |_| |_|_|_|_|\__,_|_| |_|
+                                         
+@ZishanAdThandar
+https://github.com/ZishanAdThandar
+https://about.me/ZThandar
+""")
+
+sitefile=input("Type input file name with extension.\n \n::")
+cookies=input("Cookies\n{ \"first_cookie\": \"first\", \"third_cookie\": \"third\" }\n(if not leave blank)\n::")
+#get filename to save
+while True:
+	try:
+		filename=input("Type output file name:: \nExample: output.txt\n")
+		file=open(filename, "w")
+	except:
+		print("Try again. \n")
+		continue
+	break
+
+
+with open(sitefile, "r") as ins:
+    sites = []
+    for line in ins:
+        sites.append(line)
+
+putpg=[]
+
+#removing duplicate
+sitesmod=[]
+for lnks in sites:
+	if lnks not in sitesmod:
+		sitesmod.append(lnks)
+
+		
+endpoint=0
+for site in sitesmod:
+	try:
+		site=site.strip("http://")
+		site=site.strip("https://")
+		site=site.strip("\n")
+		site="http://"+site
+		#use re.findall to get all the input fields
+		sitecode = requests.get(site, cookies=cookies)
+		#read html code
+		html = sitecode.text
+		if re.findall(' type="text" ', html)!=[]:
+			putpg.append(site)
+			endpoint=endpoint+1
+	except:
+		print("Check connection and input link")
+		continue
+
+#save file
+for link in putpg:
+	if (link=="http://") and (link=="https://"):
+		s=1
+	else:
+		file.write("%s\n" % link)
+file.close()
+print("Done! Now check your file ",filename,"\nTotal endpoint found:", endpoint)

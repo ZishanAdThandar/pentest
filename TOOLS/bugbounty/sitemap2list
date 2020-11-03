@@ -1,0 +1,85 @@
+#!/usr/bin/env python
+import requests
+import re
+import sys
+import time
+
+print("""
+   _     _               _ _ _       _     
+  | |   (_)             (_) | |     | |    
+  | |__  _ ___ _ __ ___  _| | | __ _| |__  
+  | '_ \| / __| '_ ` _ \| | | |/ _` | '_ \ 
+  | |_) | \__ \ | | | | | | | | (_| | | | |
+  |_.__/|_|___/_| |_| |_|_|_|_|\__,_|_| |_|
+											 
+  @ZishanAdThandar
+  https://github.com/ZishanAdThandar
+  https://about.me/ZThandar
+""")
+while True:
+	inputtype=input("  Sitemap is \"file(f)\" or \"link(l)\" \n\n  ::")
+
+	if inputtype=="file" or inputtype=="f":
+		while True:
+			try:
+				fl=input("  Type input file name:: \n  Example: sitemap.xml\n  ::")
+				fo= open(fl, "rb")
+				htmlb=fo.read()
+				html=str(htmlb)
+			except:
+				print("  Try again. \n")
+				continue
+			break
+		
+	elif inputtype=="link" or inputtype=="l":	
+		while True:
+			site=input("\n  Type sitemap link:: \n  Example: http://website.com/sitemap.xml \n \n  ::")
+			site=site.strip("http://")
+			site=site.strip("https://")
+			site="http://"+site
+			html=""
+
+			syms = ['\\', '|', '/', '-']
+			bs = '\b'
+
+			for _ in range(10):
+				for sym in syms:
+					sys.stdout.write("\b%s" % sym)
+					sys.stdout.flush()
+					time.sleep(.5)
+				
+		#connect to a URL
+			try:
+				sitecode = requests.get(site)
+			#read html code
+				html = sitecode.text
+			except:
+				print("  Failed to parse link. Check the link and network connection.")
+				continue
+			break
+		print("\n \n")
+	else:
+		continue
+	break
+	
+#use re.findall to get all the links
+links = re.findall('http[s]?://(?:(?!http[s]?://)[a-zA-Z]|[0-9]|[$\-_@.&+/]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', html)
+
+#get filename to save
+while True:
+	try:
+		filename=input("  Type output file name:: \n  Example: output.txt\n  ::")
+		file=open(filename, "w")
+	except:
+		print("    Try again. \n")
+		continue
+	break
+
+#save file
+for link in links:
+	if (link=="http://") and (link=="https://"):
+		s=1
+	else:
+		file.write("%s\n" % link)
+file.close()
+print("  Done! Now check your file "+filename)
